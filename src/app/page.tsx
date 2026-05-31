@@ -3,16 +3,21 @@ import Link from 'next/link';
 
 const features = [
   'Búsqueda avanzada de NASA con filtros por fecha, rover, cámara y misión.',
+  'Búsqueda semántica por descripción natural.',
   'Colecciones personalizadas por usuario.',
   'Enriquecimiento con IA para descripciones y contexto.',
   'Timeline interactivo y sistema de tags como diferenciadores.',
+  'Autenticación JWT (registro, login, logout).',
+  'Rate limiting en endpoints críticos.',
+  'UI responsive con loading, error y empty states.',
+  'Tests unitarios con Vitest.',
 ];
 
 const roadmap = [
-  'Base del proyecto y UI inicial.',
-  'PostgreSQL, Prisma y Docker Compose.',
-  'JWT propio para registro y login.',
-  'NASA API, colecciones, IA, tags y tests.',
+  '✅ Base del proyecto y UI inicial.',
+  '✅ PostgreSQL, Prisma y Docker Compose.',
+  '✅ JWT propio para registro y login.',
+  '✅ NASA API, colecciones, IA, tags y tests.',
 ];
 
 export default function HomePage() {
@@ -60,7 +65,7 @@ export default function HomePage() {
             </div>
             <div>
               <p className="text-sm font-medium text-white">Project status</p>
-              <p className="text-sm text-white/50">Phase 3: JWT auth</p>
+              <p className="text-sm text-white/50">Completo — MVP terminado</p>
             </div>
           </div>
           <div className="mt-6 space-y-4">
@@ -85,10 +90,10 @@ export default function HomePage() {
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
             <h2 className="text-2xl font-semibold text-white">Implementation roadmap</h2>
-            <p className="mt-2 text-sm text-white/60">A phased plan to cover every README requirement.</p>
+            <p className="mt-2 text-sm text-white/60">All phases completed. See the README for full details.</p>
           </div>
-          <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-200">
-            Ready to build
+          <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs text-emerald-200">
+            Completado
           </span>
         </div>
         <div className="grid gap-3 md:grid-cols-2">

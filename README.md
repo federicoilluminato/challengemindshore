@@ -16,6 +16,7 @@ Stack: Next.js 14 · TypeScript · PostgreSQL · Prisma · Tailwind CSS · OpenA
 | Autenticación JWT (registro, login, logout) | ✅ |
 | Timeline interactivo | ✅ |
 | Sistema de tags (sugeridos por IA + manuales) | ✅ |
+| Búsqueda semántica por descripción natural | ✅ |
 | Rate limiting (search, enrich, login, register) | ✅ |
 | UI responsive + loading/error/empty states | ✅ |
 | Validación de inputs (Zod + React Hook Form) | ✅ |
@@ -31,7 +32,7 @@ Stack: Next.js 14 · TypeScript · PostgreSQL · Prisma · Tailwind CSS · OpenA
 - Node.js 18+
 - Docker Desktop (para PostgreSQL)
 - Una API key de [NASA](https://api.nasa.gov)
-- (Opcional) Una API key de [OpenAI](https://platform.openai.com)
+- (Opcional) Una API key de [OpenAI](https://platform.openai.com) — requiere agregar un método de pago (no hay free tier renovable)
 
 ### 2. Clonar e instalar
 
@@ -130,7 +131,7 @@ src/
 | **JWT propio sin Auth.js** | MVP simple, stateless, sin dependencias externas de autenticación. |
 | **Prisma + PostgreSQL** | ORM type-safe con migraciones y schema visual. |
 | **Zustand no implementado** | El estado global no fue necesario; React Hook Form + props alcanzaron. |
-| **OpenAI con fallback** | Si no hay API key, se genera contexto semántico desde el título y metadata. |
+| **OpenAI con fallback semántico** | Si no hay API key, cuota excedida o error, se genera contexto sin depender de un LLM externo. |
 | **Rate limiter en memoria** | Simple y efectivo para un MVP. En producción usar Redis. |
 | **Vitest** | Rápido, compatible con el ecosistema Vite/Next.js. |
 | **Render para deploy** | App + DB en un solo proveedor, menos piezas externas. |
@@ -139,9 +140,31 @@ src/
 
 ## 🧠 Enriquecimiento IA
 
-El sistema envía a OpenAI el título, descripción, rover, cámara, misión, keywords, centro y fotógrafo. El prompt pide explícitamente **no repetir la descripción** y agregar contexto histórico, científico o de misión.
+### Integración
 
-**Fallback semántico**: Si no hay API key o la respuesta es muy genérica, se genera contexto infiriendo temas del título y metadata (marte, atardecer, pathfinder, atmósfera, etc.).
+```
+[Frontend] → POST /api/nasa/enrich → enrichment.ts → OpenAI (gpt-4o-mini)
+                                                         ↓ fallback
+                                           contexto semántico local
+```
+
+El endpoint recibe título, descripción, rover, cámara, misión, keywords, centro y fotógrafo. El prompt pide explícitamente **no repetir la descripción** y agregar contexto histórico, científico o de misión con `response_format: json_object`.
+
+**Fallback semántico**: Si no hay API key, hay error de red, o la cuota está excedida, se genera contexto infiriendo temas del título y metadata (marte, atardecer, pathfinder, atmósfera, etc.) mediante reglas determinísticas.
+
+### API Key: requisitos
+
+OpenAI **no tiene free tier renovable**. Los créditos iniciales se agotan y luego requiere un método de pago. Si no se configura `OPENAI_API_KEY`, el sistema usa el fallback semántico sin errores visibles.
+
+### Alternativas gratuitas (sin tarjeta)
+
+| Provider | Free tier | Modelo sugerido | Cómo cambiar |
+|----------|-----------|-----------------|--------------|
+| **Groq** | 30 req/min, ~144k tokens/día | `llama-3.3-70b-versatile` | Editar `src/lib/openai.ts`: importar Groq SDK, cambiar `baseURL` y modelo |
+| **Google Gemini** | 60 req/min (API estándar) | `gemini-2.0-flash` | Usar `@google/generative-ai`, cambiar tipo de cliente en `enrichment.ts` |
+| **Anthropic Claude** | Free tier con límites | `claude-3-haiku-20240307` | Usar `@anthropic-ai/sdk`, cambiar schema de respuesta |
+
+Para cambiar de proveedor: editar `src/lib/openai.ts` (cliente) y `src/lib/enrichment.ts` (llamada + prompt). La estructura de `NasaAiEnrichment` (summary, facts, tags) es agnóstica al provider.
 
 ---
 
