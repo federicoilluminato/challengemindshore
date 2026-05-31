@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-type ButtonVariant = 'default' | 'secondary' | 'ghost';
+type ButtonVariant = 'default' | 'secondary' | 'ghost' | 'outline';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
@@ -16,6 +16,8 @@ const variants: Record<ButtonVariant, string> = {
   secondary:
     'bg-secondary text-secondary-foreground hover:bg-secondary/90 focus-visible:ring-ring',
   ghost: 'bg-transparent text-foreground hover:bg-muted focus-visible:ring-ring',
+  outline:
+    'border border-white/15 bg-transparent text-white hover:bg-white/5 focus-visible:ring-cyan-400',
 };
 
 export function Button({ className, variant = 'default', ...props }: ButtonProps) {

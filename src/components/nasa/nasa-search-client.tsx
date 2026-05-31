@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -20,6 +20,11 @@ type SearchState =
   | { status: 'error'; results: NasaSearchResult[]; message: string }
   | { status: 'success'; results: NasaSearchResult[]; message: string };
 
+type CollectionOption = {
+  id: string;
+  name: string;
+};
+
 const defaultValues: NasaSearchFormValues = {
   query: '',
   mission: '',
@@ -35,6 +40,8 @@ export function NasaSearchClient() {
     results: [],
     message: 'Buscá imágenes usando filtros por fecha, rover, cámara y misión.',
   });
+  const [collections, setCollections] = useState<CollectionOption[]>([]);
+  const [collectionsLoaded, setCollectionsLoaded] = useState(false);
 
   const form = useForm<NasaSearchFormValues, unknown, NasaSearchOutput>({
     resolver: zodResolver(nasaSearchSchema),
@@ -42,6 +49,42 @@ export function NasaSearchClient() {
   });
 
   const hasResults = useMemo(() => state.results.length > 0, [state.results]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadCollections = async () => {
+      try {
+        const response = await fetch('/api/collections');
+
+        if (!response.ok) {
+          if (isMounted) {
+            setCollections([]);
+            setCollectionsLoaded(true);
+          }
+          return;
+        }
+
+        const payload = (await response.json()) as { collections?: Array<{ id: string; name: string }> };
+
+        if (isMounted) {
+          setCollections(payload.collections ?? []);
+          setCollectionsLoaded(true);
+        }
+      } catch {
+        if (isMounted) {
+          setCollections([]);
+          setCollectionsLoaded(true);
+        }
+      }
+    };
+
+    loadCollections();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const onSubmit = form.handleSubmit(async (values) => {
     setState((current) => ({ ...current, status: 'loading', message: 'Buscando imágenes de NASA...' }));
@@ -180,9 +223,13 @@ export function NasaSearchClient() {
         {hasResults ? (
           <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {state.results.map((item) => (
-              <NasaResultCard key={item.id} item={item} />
+              <NasaResultCard key={item.id} item={item} collections={collectionsLoaded ? collections : []} />
             ))}
           </div>
+        ) : null}
+
+        {collectionsLoaded && !collections.length ? (
+          <p className="mt-4 text-sm text-white/45">Iniciá sesión para guardar imágenes en tus colecciones.</p>
         ) : null}
       </div>
     </div>

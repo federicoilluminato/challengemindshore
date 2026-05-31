@@ -17,6 +17,7 @@ import { AuthCard } from './auth-card';
 export function LoginForm() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -70,7 +71,22 @@ export function LoginForm() {
 
         <div className="space-y-2">
           <Label htmlFor="password">Contraseña</Label>
-          <Input id="password" type="password" autoComplete="current-password" {...form.register('password')} />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              className="pr-20"
+              {...form.register('password')}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((current) => !current)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md px-2 py-1 text-xs font-medium text-cyan-200 transition hover:bg-white/5 hover:text-cyan-100"
+            >
+              {showPassword ? 'Ocultar' : 'Mostrar'}
+            </button>
+          </div>
           {form.formState.errors.password ? (
             <p className="text-sm text-red-300">{form.formState.errors.password.message}</p>
           ) : null}

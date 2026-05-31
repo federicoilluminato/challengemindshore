@@ -4,6 +4,7 @@ import type { NasaSearchInput } from '@/lib/schemas/nasa';
 
 export type NasaSearchResult = {
   id: string;
+  nasaId: string;
   title: string;
   description: string;
   imageUrl: string;
@@ -83,6 +84,7 @@ async function searchMarsRoverPhotos(input: NasaSearchInput) {
 
   return data.photos.map<NasaSearchResult>((photo) => ({
     id: `mars-${photo.id}`,
+    nasaId: String(photo.id),
     title: `${photo.rover?.name ?? input.rover} photo #${photo.id}`,
     description: `Captured on ${photo.earth_date}${photo.camera?.full_name ? ` with ${photo.camera.full_name}` : ''}.`,
     imageUrl: photo.img_src,
@@ -122,6 +124,7 @@ async function searchImageLibrary(input: NasaSearchInput) {
 
       return {
         id: asset.nasa_id,
+        nasaId: asset.nasa_id,
         title: asset.title,
         description: normalizeDescription(asset.description),
         imageUrl,
