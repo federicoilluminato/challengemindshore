@@ -68,6 +68,9 @@ Construir una app fullstack para el challenge de MindShore que cumpla todos los 
 7. Agregar tests
 8. Docker, README y pulido final
 
+## Diferenciador adicional (respuesta a "Sorprendenos")
+Si este fuera mi producto, agregaría una visualización 3D de los planetas (similar a Google Maps pero espacial) para ver la ubicación exacta de cada foto: dónde estaba el rover cuando la tomó, la trayectoria de la misión, y el contexto geográfico. Esto transformaría la búsqueda de imágenes en una experiencia de exploración espacial inmersiva.
+
 ## Criterio de trabajo
 - Preferir cambios pequenos y correctos
 - No sobrearquitecturar

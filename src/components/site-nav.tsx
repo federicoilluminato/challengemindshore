@@ -7,6 +7,7 @@ import { LogoutLink } from '@/components/auth/logout-link';
 
 const leftItems = [
   { href: '/explore', label: 'Explore' },
+  { href: '/timeline', label: 'Timeline' },
   { href: '/dashboard', label: 'Dashboard' },
 ];
 
