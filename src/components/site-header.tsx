@@ -8,6 +8,9 @@ export function SiteHeader() {
           MindShore
         </Link>
         <nav className="flex items-center gap-4 text-sm text-white/70">
+          <Link href="/explore" className="transition hover:text-white">
+            Explore
+          </Link>
           <Link href="/login" className="transition hover:text-white">
             Login
           </Link>

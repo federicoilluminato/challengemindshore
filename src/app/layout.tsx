@@ -7,6 +7,9 @@ import { SiteHeader } from '@/components/site-header';
 export const metadata: Metadata = {
   title: 'MindShore | NASA exploration with AI',
   description: 'Fullstack platform to explore NASA images, build collections, and enrich content with AI.',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -39,6 +39,12 @@ export default function HomePage() {
               Ver roadmap <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
+              href="/explore"
+              className="inline-flex items-center rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
+            >
+              Explorar NASA
+            </Link>
+            <Link
               href="#features"
               className="inline-flex items-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/90"
             >
