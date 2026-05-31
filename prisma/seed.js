@@ -9,6 +9,7 @@ async function main() {
     create: {
       email: 'demo@mindshore.local',
       name: 'Demo User',
+      passwordHash: 'demo-password-hash',
     },
   });
 
@@ -22,7 +23,6 @@ async function main() {
       mediaType: 'image',
       imageUrl: 'https://images-assets.nasa.gov/image/PIAxxxxxx/PIAxxxxxx~thumb.jpg',
       nasaDate: new Date('2024-01-01T00:00:00.000Z'),
-      source: 'NASA Image and Video Library',
     },
   });
 
@@ -56,7 +56,6 @@ async function main() {
     create: {
       collectionId: collection.id,
       nasaImageId: nasaImage.id,
-      note: 'Starter item for local development.',
     },
   });
 
@@ -71,7 +70,6 @@ async function main() {
     create: {
       nasaImageId: nasaImage.id,
       tagId: tag.id,
-      source: 'seed',
     },
   });
 }

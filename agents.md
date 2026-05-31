@@ -46,6 +46,13 @@ Construir una app fullstack para el challenge de MindShore que cumpla todos los 
 - Al menos un test frontend y uno backend
 - Documentacion tecnica y decisiones
 
+## Decisiones tecnicas
+- Autenticacion stateless con JWT en Auth.js, sin persistir sesiones en la base de datos para mantener el MVP simple
+- El schema de Prisma se mantiene minimo: `User`, `Collection`, `CollectionItem`, `NasaImage`, `Tag` e `ImageTag`
+- No modelar OAuth, magic links ni verification tokens por ahora; solo email + password con `passwordHash`
+- Quitar campos que no aportan al MVP inicial, como `image`, `emailVerified`, `note` y `source`
+- Agregar tablas o campos solo cuando exista una necesidad funcional concreta
+
 ## Diferenciadores elegidos
 1. Timeline interactivo
 2. Sistema de tags
