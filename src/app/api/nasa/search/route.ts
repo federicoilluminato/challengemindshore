@@ -1,16 +1,8 @@
 import { NextResponse } from 'next/server';
 
-import { checkRateLimit } from '@/lib/rate-limit';
+import { checkRateLimit, getClientKey } from '@/lib/rate-limit';
 import { searchNasa } from '@/lib/nasa';
 import { nasaSearchSchema } from '@/lib/schemas/nasa';
-
-function getClientKey(request: Request) {
-  return (
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    request.headers.get('x-real-ip') ??
-    'anonymous'
-  );
-}
 
 export async function POST(request: Request) {
   const rateLimit = checkRateLimit(getClientKey(request));

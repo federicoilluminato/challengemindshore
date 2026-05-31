@@ -1,135 +1,176 @@
-# MindShore - Desafio Técnico
+# MindShore Challenge — Solución
 
-**Plataforma de Exploración Espacial con IA**
+**Plataforma de Exploración Espacial con IA** — [Repo](https://github.com/tu-usuario/mindshore-challenge)
 
-> Crea una aplicación web fullstack que permita explorar, curar y enriquecer contenido espacial de NASA utilizando IA generativa.
+Stack: Next.js 14 · TypeScript · PostgreSQL · Prisma · Tailwind CSS · OpenAI · JWT
 
-Este challenge es abierto y público. No necesitas que nadie te invite. Si sos desarrollador/a y querés sumarte a MindShore, este es tu punto de entrada.
+---
 
-## ¿Cómo participar?
+## ✨ Funcionalidades
+
+| Feature | Estado |
+|---------|--------|
+| Búsqueda avanzada NASA (filtros: fecha, rover, cámara, misión) | ✅ |
+| Colecciones personalizadas por usuario | ✅ |
+| Enriquecimiento con IA (OpenAI + fallback semántico) | ✅ |
+| Autenticación JWT (registro, login, logout) | ✅ |
+| Timeline interactivo | ✅ |
+| Sistema de tags (sugeridos por IA + manuales) | ✅ |
+| Rate limiting (search, enrich, login, register) | ✅ |
+| UI responsive + loading/error/empty states | ✅ |
+| Validación de inputs (Zod + React Hook Form) | ✅ |
+| Tests (frontend + backend con Vitest) | ✅ |
+| Docker Compose (PostgreSQL + app) | ✅ |
+
+---
+
+## 🚀 Cómo correr localmente
+
+### 1. Prerequisitos
+
+- Node.js 18+
+- Docker Desktop (para PostgreSQL)
+- Una API key de [NASA](https://api.nasa.gov)
+- (Opcional) Una API key de [OpenAI](https://platform.openai.com)
+
+### 2. Clonar e instalar
+
+```bash
+git clone <tu-repo>
+cd mindshore-challenge
+npm install
+```
+
+### 3. Variables de entorno
+
+Copiar `.env.example` a `.env.local`:
+
+```bash
+cp .env.example .env.local
+```
+
+Configurar:
+
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/mindshore"
+JWT_SECRET="un-seguro-muy-largo"
+NASA_API_KEY="tu-api-key-nasa"
+OPENAI_API_KEY="tu-api-key-openai"    # Opcional
+```
+
+### 4. Base de datos
+
+```bash
+docker compose up -d db               # Levanta PostgreSQL
+npx prisma migrate dev                # Crea las tablas
+```
+
+### 5. Iniciar
+
+```bash
+npm run dev
+```
+
+Abrir [http://localhost:3000](http://localhost:3000).
+
+---
+
+## 🐳 Docker Compose (todo en uno)
+
+```bash
+docker compose up
+```
+
+Levanta PostgreSQL + la app en el puerto `3000`.
+
+---
+
+## 🧪 Tests
+
+```bash
+npm run test
+```
+
+- 1 test frontend (Componente Button)
+- 1 test backend (utilidad `cn`)
+
+---
+
+## 🏗️ Arquitectura
 
 ```
-1. Forkeá este repositorio
-2. Leé este README completo antes de escribir una sola línea de código
-3. Construí tu solución
-4. Abrí un Pull Request contra este repo con tu trabajo
-5. Nuestro equipo de ingeniería lo revisa y te da feedback
+src/
+├── app/                  # Next.js App Router
+│   ├── api/              # API endpoints (auth, nasa, collections, tags)
+│   ├── (auth)/           # Login / Register pages
+│   ├── explore/          # Búsqueda NASA
+│   ├── timeline/         # Timeline interactivo
+│   └── dashboard/        # Colecciones del usuario
+├── components/
+│   ├── ui/               # shadcn/ui (Button, Input, Label, Spinner)
+│   ├── auth/             # LoginForm, RegisterForm, LogoutLink
+│   ├── nasa/             # NasaSearchClient, NasaResultCard, NasaTimeline
+│   └── collections/      # CollectionManager, CollectionGallery
+├── lib/
+│   ├── nasa.ts           # Cliente API NASA
+│   ├── enrichment.ts     # Enriquecimiento IA + fallback semántico
+│   ├── auth.ts           # JWT (create, verify, cookies)
+│   ├── rate-limit.ts     # Rate limiter en memoria
+│   ├── schemas/          # Zod schemas (nasa, auth, collections, enrichment)
+│   ├── prisma.ts         # Cliente Prisma singleton
+│   └── openai.ts         # Cliente OpenAI
+└── test/                 # Tests Vitest
 ```
 
-**No hay fecha límite.** Valoramos la calidad sobre la velocidad. Tomate el tiempo que necesites para demostrar tu mejor trabajo.
+### Decisiones técnicas
 
-## El desafío
+| Decisión | Por qué |
+|----------|---------|
+| **Next.js App Router** | API + frontend en un mismo proyecto. Rutas dinámicas y server components. |
+| **JWT propio sin Auth.js** | MVP simple, stateless, sin dependencias externas de autenticación. |
+| **Prisma + PostgreSQL** | ORM type-safe con migraciones y schema visual. |
+| **Zustand no implementado** | El estado global no fue necesario; React Hook Form + props alcanzaron. |
+| **OpenAI con fallback** | Si no hay API key, se genera contexto semántico desde el título y metadata. |
+| **Rate limiter en memoria** | Simple y efectivo para un MVP. En producción usar Redis. |
+| **Vitest** | Rápido, compatible con el ecosistema Vite/Next.js. |
+| **Render para deploy** | App + DB en un solo proveedor, menos piezas externas. |
 
-### Objetivo
+---
 
-Crear una aplicación web fullstack que conecte con la API de NASA para explorar imágenes espaciales, permita a los usuarios organizar ese contenido en colecciones, y use IA generativa (OpenAI) para enriquecer la experiencia.
+## 🧠 Enriquecimiento IA
 
-### Funcionalidades core (obligatorias)
+El sistema envía a OpenAI el título, descripción, rover, cámara, misión, keywords, centro y fotógrafo. El prompt pide explícitamente **no repetir la descripción** y agregar contexto histórico, científico o de misión.
 
-| Feature | Descripción |
-|---------|-------------|
-| **Búsqueda avanzada** | Buscar imágenes de NASA con filtros: fecha, rover, cámara, misión |
-| **Colecciones personalizadas** | Los usuarios pueden crear múltiples colecciones temáticas, no solo "favoritos" |
-| **Enriquecimiento con IA** | Generar descripciones, datos curiosos o contexto historico de las imágenes usando OpenAI (o cualquier LLM) |
-| **Autenticación** | Registro, login, y que cada usuario tenga sus propias colecciones |
+**Fallback semántico**: Si no hay API key o la respuesta es muy genérica, se genera contexto infiriendo temas del título y metadata (marte, atardecer, pathfinder, atmósfera, etc.).
 
-### Diferenciadores (elegir al menos 2)
+---
 
-| Feature | Descripción |
-|---------|-------------|
-| Comparador de imágenes | Seleccionar 2+ imágenes y ver side-by-side con análisis comparativo generado por IA |
-| Timeline interactivo | Visualizar imágenes en una línea de tiempo navegable |
-| Exportar coleccion | Generar un PDF o presentación con las imágenes y descripciones |
-| Búsqueda semántica | Buscar imágenes por descripción natural ("mostrame atardeceres en Marte") |
-| Sistema de tags | Taggear imágenes manualmente o con sugerencias de IA |
+## 📈 Diferenciadores elegidos
 
-## Requisitos técnicos
+1. **Timeline interactivo** — Las imágenes se ordenan cronológicamente en una línea de tiempo vertical con dots, thumbnails y metadata.
+2. **Sistema de tags** — Sugeridos por IA y persistibles en la base de datos por imagen.
 
-### Frontend
+---
 
-- Framework moderno (React, Vue 3, Angular, Svelte)
-- Estado global (Redux, Pinia, Zustand, o similar)
-- Diseño responsive
-- Manejo de estados de carga, error y vacío
-- Al menos **un test unitario** de componente
+## 🔮 Qué haría con más tiempo
 
-### Backend
+1. **Visualización 3D de planetas** (respuesta a "Sorprendenos"): un Google Maps espacial para ver dónde estaba cada rover cuando tomó cada foto, la trayectoria de la misión y el contexto geográfico. Usaría Three.js o Cesium.js.
+2. **Búsqueda semántica** con embeddings.
+3. **Exportar colecciones a PDF**.
+4. **Redis** para rate limiting y caché de NASA API.
+5. **Tests de integración** con base de datos real.
+6. **Dashboard con estadísticas** de colecciones y actividad.
 
-- API RESTful o GraphQL
-- Autenticación con JWT o sesiones
-- Validación de inputs
-- Rate limiting básico para proteger las llamadas a APIs externas
-- Al menos **un test unitario o de integración**
+---
 
-### Base de datos
+## 🌐 Deploy
 
-- Modelado relacional (PostgreSQL, MySQL, etc.) o documental coherente (MongoDB, Firebase, etc.)
-- Migraciones o seeds para facilitar el setup (o scripts para poblar datos iniciales)
+**Elegido: Render** — App Next.js + PostgreSQL en un solo proveedor.
 
-### DevOps (bonus)
+Alternativas válidas: Vercel (mejor para Next.js) o Railway (similar a Render).
 
-- Dockerizar la aplicación (`docker-compose` para levantar todo)
-- README con arquitectura y decisiones técnicas
+---
 
-## APIs requeridas
+## 🤝 Contribuciones
 
-| API | Documentación |
-|-----|---------------|
-| NASA Image and Video Library | https://api.nasa.gov |
-| OpenAI GPT | https://platform.openai.com/docs |
-
-> **Nota:** La API de NASA es gratuita y solo requiere una API key que podes obtener en https://api.nasa.gov. Para OpenAI, podes usar el free tier o documentar como se integraria si no tenes acceso.
-
-## Criterios de evaluación
-
-| Aspecto | Peso |
-|---------|------|
-| Funcionalidad completa | 25% |
-| Calidad y claridad del código | 25% |
-| Arquitectura y estructura del proyecto | 20% |
-| UI/UX y atención al detalle | 15% |
-| Testing y documentación | 10% |
-| Creatividad y extras | 5% |
-
-## Entrega
-
-Tu Pull Request debe incluir:
-
-- **Código fuente completo** con historial de commits (queremos ver tu proceso)
-- **README en tu repo** con:
-  - Instrucciones de instalación y ejecución
-  - Decisiones técnicas y trade-offs
-  - Que harías con más tiempo
-- **Deploy funcional** es un plus (Vercel, Railway, Render, etc.)
-
-### Estructura del PR
-
-En la descripción de tu PR, contanos:
-
-1. ¿Qué construiste y por qué tomaste las decisiones que tomaste?
-2. ¿Qué diferenciadores elegiste y por qué?
-3. ¿Qué mejorías si tuvieras más tiempo?
-4. ¿Cualquier cosa que quieras que sepamos antes de revisar?
-
-## Consejos para destacar
-
-- **Commits atomicos y descriptivos** — nos importa ver como pensas, no un solo commit con todo
-- **Maneja errores de forma elegante** — tanto en frontend como backend. Los estados vacios y de error son parte de la UX
-- **Pensa en la seguridad** — no expongas API keys en el codigo, valida inputs, sanitiza datos
-- **Documenta las decisiones tecnicas** — especialmente los trade-offs. "Elegi X porque Y" vale más que la solución perfecta sin explicación
-- **Sorprendenos** — que harias diferente si este fuera tu producto?
-
-## ¿Preguntas?
-
-Si algo no esta claro, [abri un issue](https://github.com/mindshoresl/challenge/issues) en este repositorio. Hacer buenas preguntas es una habilidad que valoramos mucho.
-
-También podés escribirnos a **talent@mindshore.io**.
-
-## Sobre MindShore
-
-Somos una empresa de tecnología con presencia en mas de 12 países. Trabajamos en proyectos de Data & Analytics, Software Engineering, ERP/CRM e IA aplicada para clientes globales.
-
-Más info en [mindshore.io](https://mindshore.io/) y nuestro [LinkedIn](https://www.linkedin.com/company/mindshore)
-
-
-**Buena suerte. Esperamos ver tu talento.**
+Este es un challenge técnico de MindShore. Para participar, forkear el [repo original](https://github.com/mindshoresl/challenge) y abrir un PR.

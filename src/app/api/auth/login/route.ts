@@ -2,9 +2,25 @@ import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/prisma';
 import { createAuthToken, setAuthCookie, verifyPassword } from '@/lib/auth';
+import { checkRateLimit, getClientKey } from '@/lib/rate-limit';
 import { loginSchema } from '@/lib/schemas/auth';
 
 export async function POST(request: Request) {
+  const rateLimit = checkRateLimit(getClientKey(request), 5);
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { message: 'Demasiados intentos. Probá de nuevo en un minuto.' },
+      {
+        status: 429,
+        headers: {
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': String(rateLimit.resetAt),
+        },
+      },
+    );
+  }
+
   let body: unknown;
 
   try {

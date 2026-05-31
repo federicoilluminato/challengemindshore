@@ -11,7 +11,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "test": "vitest run"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -30,16 +31,21 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^22.13.10",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^6.0.2",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.24",
+    "jsdom": "^29.1.1",
     "postcss": "^8.5.3",
     "prisma": "^6.4.1",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.2",
+    "vitest": "^4.1.7"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
