@@ -11,11 +11,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { registerSchema, type RegisterInput } from '@/lib/schemas/auth';
+import { useAuthStore } from '@/lib/stores/auth';
 
 import { AuthCard } from './auth-card';
 
 export function RegisterForm() {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const form = useForm<RegisterInput>({
@@ -36,13 +38,14 @@ export function RegisterForm() {
       body: JSON.stringify(values),
     });
 
-    const payload = (await response.json()) as { message?: string };
+    const payload = (await response.json()) as { user?: { id: string; email: string; name: string | null }; message?: string };
 
-    if (!response.ok) {
+    if (!response.ok || !payload.user) {
       setServerError(payload.message ?? 'No se pudo crear la cuenta');
       return;
     }
 
+    setUser(payload.user);
     router.push('/dashboard');
     router.refresh();
   });

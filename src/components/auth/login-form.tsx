@@ -11,11 +11,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { loginSchema, type LoginInput } from '@/lib/schemas/auth';
+import { useAuthStore } from '@/lib/stores/auth';
 
 import { AuthCard } from './auth-card';
 
 export function LoginForm() {
   const router = useRouter();
+  const setUser = useAuthStore((state) => state.setUser);
   const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -36,13 +38,14 @@ export function LoginForm() {
       body: JSON.stringify(values),
     });
 
-    const payload = (await response.json()) as { message?: string };
+    const payload = (await response.json()) as { user?: { id: string; email: string; name: string | null }; message?: string };
 
-    if (!response.ok) {
+    if (!response.ok || !payload.user) {
       setServerError(payload.message ?? 'No se pudo iniciar sesión');
       return;
     }
 
+    setUser(payload.user);
     router.push('/dashboard');
     router.refresh();
   });
