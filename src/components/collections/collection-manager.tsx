@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -21,6 +22,16 @@ type CollectionItem = {
   description: string | null;
   createdAt: Date | string;
   _count?: { collectionItems: number };
+  collectionItems?: Array<{
+    id: string;
+    nasaImage: {
+      id: string;
+      title: string;
+      imageUrl: string;
+      description: string | null;
+      nasaDate: Date | string;
+    };
+  }>;
 };
 
 type CollectionManagerProps = {
@@ -166,14 +177,22 @@ export function CollectionManager({ initialCollections }: CollectionManagerProps
                 <p className="text-xs uppercase tracking-[0.24em] text-white/35">
                   {new Date(collection.createdAt).toLocaleDateString('es-AR')}
                 </p>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => handleDelete(collection.id)}
-                  disabled={deletingId === collection.id}
-                >
-                  {deletingId === collection.id ? 'Eliminando...' : 'Eliminar'}
-                </Button>
+                <div className="flex gap-2">
+                  <Link
+                    href={`/dashboard/collections/${collection.id}`}
+                    className="inline-flex items-center justify-center rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/90"
+                  >
+                    Ver
+                  </Link>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => handleDelete(collection.id)}
+                    disabled={deletingId === collection.id}
+                  >
+                    {deletingId === collection.id ? 'Eliminando...' : 'Eliminar'}
+                  </Button>
+                </div>
               </div>
             </article>
           ))

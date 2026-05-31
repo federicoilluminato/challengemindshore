@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { CalendarDays, ChevronDown, Search, Sparkles } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -115,62 +116,97 @@ export function NasaSearchClient() {
 
   return (
     <div className="space-y-10">
-      <div className="glass rounded-3xl p-8">
-        <div className="mb-6">
-          <p className="text-xs uppercase tracking-[0.28em] text-cyan-200/70">NASA Explorer</p>
-          <h1 className="mt-2 text-3xl font-semibold text-white">Búsqueda avanzada</h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-white/60">Buscá imágenes del rover y de la librería de NASA con filtros por fecha, rover, cámara y misión.</p>
+      <div className="glass rounded-3xl border border-white/10 p-8 shadow-[0_20px_80px_rgba(0,0,0,0.24)]">
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.28em] text-cyan-200/70">NASA Explorer</p>
+            <h1 className="mt-2 text-3xl font-semibold text-white">Búsqueda avanzada</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/60">Buscá imágenes del rover y de la librería de NASA con filtros por fecha, rover, cámara y misión.</p>
+          </div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs text-cyan-100">
+            <Sparkles className="h-3.5 w-3.5" />
+            Exploración
+          </span>
         </div>
 
-        <form className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" onSubmit={onSubmit} noValidate>
-          <div className="space-y-2">
-            <Label htmlFor="query">Texto libre</Label>
-            <Input id="query" placeholder="atardeceres en Marte" {...form.register('query')} />
+        <form className="grid gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:grid-cols-2 xl:grid-cols-10" onSubmit={onSubmit} noValidate>
+          <div className="space-y-2 md:col-span-2 xl:col-span-10">
+            <Label htmlFor="query" className="text-white/80">
+              Texto libre
+            </Label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
+              <Input id="query" placeholder="atardeceres en Marte" className="h-11 border-white/10 bg-slate-950/35 pl-9 text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20 [&:-webkit-autofill]:[box-shadow:0_0_0_30px_#0f172a_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:white]" {...form.register('query')} />
+            </div>
             {form.formState.errors.query ? <p className="text-sm text-red-300">{form.formState.errors.query.message}</p> : null}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="mission">Misión</Label>
-            <Input id="mission" placeholder="mars 2020" {...form.register('mission')} />
+          <div className="space-y-2 xl:col-span-2">
+            <Label htmlFor="mission" className="text-white/80">
+              Misión
+            </Label>
+            <Input id="mission" placeholder="mars 2020" className="h-11 border-white/10 bg-slate-950/35 text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20" {...form.register('mission')} />
             {form.formState.errors.mission ? <p className="text-sm text-red-300">{form.formState.errors.mission.message}</p> : null}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="date">Fecha exacta</Label>
-            <Input id="date" type="date" {...form.register('date')} />
+          <div className="space-y-2 xl:col-span-2">
+            <Label htmlFor="date" className="text-white/80">
+              Fecha exacta
+            </Label>
+            <div className="relative">
+              <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
+              <Input id="date" type="date" className="h-11 border-white/10 bg-slate-950/35 pl-9 text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&:-webkit-autofill]:[box-shadow:0_0_0_30px_#0f172a_inset] [&:-webkit-autofill]:[-webkit-text-fill-color:white]" {...form.register('date')} />
+            </div>
             {form.formState.errors.date ? <p className="text-sm text-red-300">{form.formState.errors.date.message}</p> : null}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="rover">Rover</Label>
-            <select
-              id="rover"
-              className="flex h-10 w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white shadow-sm outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"
-              {...form.register('rover')}
-            >
-              <option value="">Sin filtro</option>
-              <option value="curiosity">Curiosity</option>
-              <option value="opportunity">Opportunity</option>
-              <option value="spirit">Spirit</option>
-              <option value="perseverance">Perseverance</option>
-            </select>
+          <div className="space-y-2 xl:col-span-2">
+            <Label htmlFor="rover" className="text-white/80">
+              Rover
+            </Label>
+            <div className="relative">
+              <select
+                id="rover"
+                className="flex h-11 w-full appearance-none rounded-xl border border-white/10 bg-slate-950/35 px-3 py-2 pr-10 text-sm text-white shadow-inner shadow-black/10 outline-none transition focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/20"
+                {...form.register('rover')}
+              >
+                <option value="">Sin filtro</option>
+                <option value="curiosity">Curiosity</option>
+                <option value="opportunity">Opportunity</option>
+                <option value="spirit">Spirit</option>
+                <option value="perseverance">Perseverance</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35" />
+            </div>
             {form.formState.errors.rover ? <p className="text-sm text-red-300">{form.formState.errors.rover.message}</p> : null}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="camera">Cámara</Label>
-            <Input id="camera" placeholder="FHAZ, RHAZ, NAVCAM..." {...form.register('camera')} />
+          <div className="space-y-2 xl:col-span-2">
+            <Label htmlFor="camera" className="text-white/80">
+              Cámara
+            </Label>
+            <Input id="camera" placeholder="FHAZ, RHAZ, NAVCAM..." className="h-11 border-white/10 bg-slate-950/35 text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20" {...form.register('camera')} />
             {form.formState.errors.camera ? <p className="text-sm text-red-300">{form.formState.errors.camera.message}</p> : null}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="page">Página</Label>
-            <Input id="page" type="number" min={1} max={5} {...form.register('page', { valueAsNumber: true })} />
+          <div className="space-y-2 xl:col-span-2">
+            <Label htmlFor="page" className="text-white/80">
+              Página
+            </Label>
+            <Input
+              id="page"
+              type="number"
+              min={1}
+              max={5}
+              placeholder="1"
+              className="h-11 border-white/10 bg-slate-950/35 text-white placeholder:text-white/30 focus-visible:border-cyan-400/50 focus-visible:ring-cyan-400/20"
+              {...form.register('page', { valueAsNumber: true })}
+            />
             {form.formState.errors.page ? <p className="text-sm text-red-300">{form.formState.errors.page.message}</p> : null}
           </div>
 
-          <div className="md:col-span-2 xl:col-span-3">
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+          <div className="flex justify-center md:col-span-2 xl:col-span-10">
+            <Button type="submit" className="h-11 w-56 bg-gradient-to-r from-cyan-400 via-sky-400 to-indigo-400 text-slate-950 shadow-lg shadow-cyan-500/20 hover:from-cyan-300 hover:via-sky-300 hover:to-indigo-300" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? (
                 <span className="inline-flex items-center gap-2">
                   <Spinner className="h-4 w-4" />
@@ -228,9 +264,6 @@ export function NasaSearchClient() {
           </div>
         ) : null}
 
-        {collectionsLoaded && !collections.length ? (
-          <p className="mt-4 text-sm text-white/45">Iniciá sesión para guardar imágenes en tus colecciones.</p>
-        ) : null}
       </div>
     </div>
   );

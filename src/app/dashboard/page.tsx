@@ -19,6 +19,12 @@ export default async function DashboardPage() {
       _count: {
         select: { collectionItems: true },
       },
+      collectionItems: {
+        orderBy: { createdAt: 'desc' },
+        include: {
+          nasaImage: true,
+        },
+      },
     },
   });
 

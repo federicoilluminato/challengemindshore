@@ -19,6 +19,12 @@ export async function GET() {
       _count: {
         select: { collectionItems: true },
       },
+      collectionItems: {
+        orderBy: { createdAt: 'desc' },
+        include: {
+          nasaImage: true,
+        },
+      },
     },
   });
 
@@ -55,6 +61,12 @@ export async function POST(request: Request) {
     include: {
       _count: {
         select: { collectionItems: true },
+      },
+      collectionItems: {
+        orderBy: { createdAt: 'desc' },
+        include: {
+          nasaImage: true,
+        },
       },
     },
   });

@@ -13,6 +13,10 @@ export type NasaSearchResult = {
   rover?: string;
   camera?: string;
   mission?: string;
+  keywords?: string[];
+  center?: string;
+  photographer?: string;
+  location?: string;
   pageUrl?: string;
 };
 
@@ -35,6 +39,10 @@ type NasaImageLibraryResponse = {
         title?: string;
         description?: string;
         date_created?: string;
+        keywords?: string[];
+        center?: string;
+        photographer?: string;
+        location?: string;
       }>;
       links?: Array<{ href?: string }>;
     }>;
@@ -131,6 +139,10 @@ async function searchImageLibrary(input: NasaSearchInput) {
         date: asset.date_created ?? null,
         source: 'image-library',
         mission: input.mission,
+        keywords: asset.keywords,
+        center: asset.center,
+        photographer: asset.photographer,
+        location: asset.location,
       };
     })
     .filter((item): item is NasaSearchResult => item !== null);
