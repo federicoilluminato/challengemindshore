@@ -8,6 +8,3 @@ build
 .env.production.local
 .env.test.local
 *.log
-pnpm-lock.yaml
-package-lock.json
-yarn.lock
