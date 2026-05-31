@@ -13,7 +13,7 @@ Construir una app fullstack para el challenge de MindShore que cumpla todos los 
 - TanStack Query para estado de servidor
 - Zustand para estado global ligero
 - React Hook Form + Zod para formularios y validacion
-- Auth.js para autenticacion
+- Autenticacion propia con JWT para el MVP
 - OpenAI SDK para enriquecimiento con IA
 - Vitest + React Testing Library para tests
 - Docker Compose para levantar app + DB en desarrollo
@@ -47,9 +47,9 @@ Construir una app fullstack para el challenge de MindShore que cumpla todos los 
 - Documentacion tecnica y decisiones
 
 ## Decisiones tecnicas
-- Autenticacion stateless con JWT en Auth.js, sin persistir sesiones en la base de datos para mantener el MVP simple
+- Autenticacion stateless con JWT propio, sin persistir sesiones en la base de datos para mantener el MVP simple
 - El schema de Prisma se mantiene minimo: `User`, `Collection`, `CollectionItem`, `NasaImage`, `Tag` e `ImageTag`
-- No modelar OAuth, magic links ni verification tokens por ahora; solo email + password con `passwordHash`
+- No modelar OAuth, magic links, verification tokens ni sesiones persistidas por ahora; solo email + password con `passwordHash`
 - Quitar campos que no aportan al MVP inicial, como `image`, `emailVerified`, `note` y `source`
 - Agregar tablas o campos solo cuando exista una necesidad funcional concreta
 
@@ -61,11 +61,12 @@ Construir una app fullstack para el challenge de MindShore que cumpla todos los 
 ## MVP por fases
 1. Inicializar proyecto, DB, auth y estructura base
 2. Integrar NASA API y busqueda avanzada
-3. Implementar colecciones por usuario
-4. Agregar enriquecimiento con IA
-5. Construir timeline y tags
-6. Agregar tests
-7. Docker, README y pulido final
+3. Implementar autenticacion propia con JWT y flujos de registro/login
+4. Implementar colecciones por usuario
+5. Agregar enriquecimiento con IA
+6. Construir timeline y tags
+7. Agregar tests
+8. Docker, README y pulido final
 
 ## Criterio de trabajo
 - Preferir cambios pequenos y correctos

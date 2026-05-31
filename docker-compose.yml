@@ -23,8 +23,7 @@ services:
     command: npm run dev
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/mindshore
-      NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: change-me
+      JWT_SECRET: change-me
     ports:
       - '3000:3000'
     volumes:

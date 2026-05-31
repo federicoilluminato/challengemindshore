@@ -11,7 +11,7 @@ const features = [
 const roadmap = [
   'Base del proyecto y UI inicial.',
   'PostgreSQL, Prisma y Docker Compose.',
-  'Auth.js para registro y login.',
+  'JWT propio para registro y login.',
   'NASA API, colecciones, IA, tags y tests.',
 ];
 
@@ -29,7 +29,7 @@ export default function HomePage() {
           </h1>
           <p className="max-w-2xl text-base leading-7 text-white/70 sm:text-lg">
             This repo is being built as a modular fullstack app with Next.js, PostgreSQL, Prisma,
-            Auth.js, and a polished product-oriented UI.
+            JWT auth, and a polished product-oriented UI.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
@@ -54,7 +54,7 @@ export default function HomePage() {
             </div>
             <div>
               <p className="text-sm font-medium text-white">Project status</p>
-              <p className="text-sm text-white/50">Phase 1: foundation</p>
+              <p className="text-sm text-white/50">Phase 3: JWT auth</p>
             </div>
           </div>
           <div className="mt-6 space-y-4">
