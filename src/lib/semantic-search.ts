@@ -5,16 +5,85 @@ import type { NasaSearchOutput } from '@/lib/schemas/nasa';
 const ROVER_LIST = ['curiosity', 'opportunity', 'spirit', 'perseverance'] as const;
 type RoverName = (typeof ROVER_LIST)[number];
 
+const SPANISH_ROVERS: Record<string, RoverName> = {
+  curiosidad: 'curiosity',
+  oportunidad: 'opportunity',
+  oppie: 'opportunity',
+  espíritu: 'spirit',
+  perseverancia: 'perseverance',
+  percy: 'perseverance',
+};
+
 const KNOWN_CAMERAS = ['fhaz', 'rhaz', 'navcam', 'mastcam', 'pancam', 'minites', 'chemcam', 'mahli', 'mardi', 'eecam', 'pixl', 'sherloc', 'watson', 'supercam', 'mastcam-z', 'meda', 'moxie', 'mcs', 'hazcam', 'front hazcam', 'rear hazcam'];
+
+const ES_TO_EN: Record<string, string> = {
+  marte: 'mars',
+  atardecer: 'sunset',
+  atardeceres: 'sunset',
+  amanecer: 'sunrise',
+  amaneceres: 'sunrise',
+  cráter: 'crater',
+  cráteres: 'crater',
+  crater: 'crater',
+  roca: 'rock',
+  rocas: 'rock',
+  cielo: 'sky',
+  polvo: 'dust',
+  atmósfera: 'atmosphere',
+  atmosfera: 'atmosphere',
+  paisaje: 'landscape',
+  paisajes: 'landscape',
+  duna: 'dune',
+  dunas: 'dune',
+  huella: 'track',
+  huellas: 'track',
+  rueda: 'wheel',
+  ruedas: 'wheel',
+  tormenta: 'storm',
+  tormentas: 'storm',
+  sombra: 'shadow',
+  sombras: 'shadow',
+  montaña: 'mountain',
+  montañas: 'mountain',
+  colina: 'hill',
+  colinas: 'hill',
+  horizonte: 'horizon',
+  luz: 'light',
+  sol: 'sun',
+  estrella: 'star',
+  estrellas: 'star',
+  nave: 'spacecraft',
+  planeta: 'planet',
+  planetas: 'planets',
+  tierra: 'earth',
+  luna: 'moon',
+  satélite: 'satellite',
+  orbita: 'orbit',
+  misión: 'mission',
+  misiones: 'mission',
+  exploración: 'exploration',
+  exploracion: 'exploration',
+  descubrimiento: 'discovery',
+  científico: 'science',
+  cientifico: 'science',
+  cámara: 'camera',
+  camara: 'camera',
+  foto: '',
+  fotos: '',
+  imagen: '',
+  imágenes: '',
+  imagenes: '',
+};
 
 function extractRover(text: string): RoverName | undefined {
   const lower = text.toLowerCase();
   for (const name of ROVER_LIST) {
     if (lower.includes(name)) return name;
   }
+  for (const [spanish, english] of Object.entries(SPANISH_ROVERS)) {
+    if (lower.includes(spanish)) return english;
+  }
   if (lower.includes('curious')) return 'curiosity';
-  if (lower.includes('oppie')) return 'opportunity';
-  if (lower.includes('percy')) return 'perseverance';
   return undefined;
 }
 
@@ -96,12 +165,20 @@ export function interpretNaturalLanguage(query: string): SemanticSearchInterpret
   for (const name of ROVER_LIST) {
     cleanQuery = cleanQuery.replace(new RegExp(name, 'ig'), '');
   }
+  for (const [spanish, _rover] of Object.entries(SPANISH_ROVERS)) {
+    cleanQuery = cleanQuery.replace(new RegExp(spanish, 'ig'), '');
+  }
   for (const cam of KNOWN_CAMERAS) {
     cleanQuery = cleanQuery.replace(new RegExp(cam.replace(/[- ]/g, '[- ]'), 'ig'), '');
   }
 
   cleanQuery = cleanQuery.replace(/\b(?:mostrame|buscame|quiero ver|dame|enseñame|muestra|buscar|encuentra|fotos?\s*de|imágenes?\s*de|del?\s+)\b/gi, '');
   cleanQuery = cleanQuery.replace(/[,\s]+/g, ' ').trim();
+
+  for (const [es, en] of Object.entries(ES_TO_EN)) {
+    cleanQuery = cleanQuery.replace(new RegExp(`\\b${es}\\b`, 'gi'), en);
+  }
+  cleanQuery = cleanQuery.replace(/\s+/g, ' ').trim();
 
   if (!cleanQuery && rover) {
     cleanQuery = rover;
