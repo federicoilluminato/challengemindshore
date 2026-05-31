@@ -115,6 +115,7 @@ src/
 ├── lib/
 │   ├── nasa.ts           # Cliente API NASA
 │   ├── enrichment.ts     # Enriquecimiento IA + fallback semántico
+│   ├── semantic-search.ts # Parser de lenguaje natural a filtros NASA
 │   ├── auth.ts           # JWT (create, verify, cookies)
 │   ├── rate-limit.ts     # Rate limiter en memoria
 │   ├── schemas/          # Zod schemas (nasa, auth, collections, enrichment)
@@ -130,7 +131,7 @@ src/
 | **Next.js App Router** | API + frontend en un mismo proyecto. Rutas dinámicas y server components. |
 | **JWT propio sin Auth.js** | MVP simple, stateless, sin dependencias externas de autenticación. |
 | **Prisma + PostgreSQL** | ORM type-safe con migraciones y schema visual. |
-| **Zustand no implementado** | El estado global no fue necesario; React Hook Form + props alcanzaron. |
+| **Zustand** | Store simple para estado de auth (setUser/clearUser). No se necesitó más estado global. |
 | **OpenAI con fallback semántico** | Si no hay API key, cuota excedida o error, se genera contexto sin depender de un LLM externo. |
 | **Rate limiter en memoria** | Simple y efectivo para un MVP. En producción usar Redis. |
 | **Vitest** | Rápido, compatible con el ecosistema Vite/Next.js. |
@@ -172,13 +173,14 @@ Para cambiar de proveedor: editar `src/lib/openai.ts` (cliente) y `src/lib/enric
 
 1. **Timeline interactivo** — Las imágenes se ordenan cronológicamente en una línea de tiempo vertical con dots, thumbnails y metadata.
 2. **Sistema de tags** — Sugeridos por IA y persistibles en la base de datos por imagen.
+3. **Búsqueda semántica** — Buscar imágenes por descripción natural ("show me sunsets on Mars"). Un parser traduce el texto a parámetros estructurados (rover, cámara, fecha) y llama a la API de NASA.
 
 ---
 
 ## 🔮 Qué haría con más tiempo
 
 1. **Visualización 3D de planetas** (respuesta a "Sorprendenos"): un Google Maps espacial para ver dónde estaba cada rover cuando tomó cada foto, la trayectoria de la misión y el contexto geográfico. Usaría Three.js o Cesium.js.
-2. **Búsqueda semántica** con embeddings.
+2. **Embeddings para búsqueda semántica real** — la actual usa un parser determinista; con embeddings de OpenAI se podría buscar por significado real.
 3. **Exportar colecciones a PDF**.
 4. **Redis** para rate limiting y caché de NASA API.
 5. **Tests de integración** con base de datos real.
@@ -189,6 +191,22 @@ Para cambiar de proveedor: editar `src/lib/openai.ts` (cliente) y `src/lib/enric
 ## 🌐 Deploy
 
 **Elegido: Render** — App Next.js + PostgreSQL en un solo proveedor.
+
+### Configuración en Render
+
+1. Crear un **Web Service** desde el repo
+2. Agregar un **PostgreSQL** desde el Dashboard de Render
+3. Setear variables de entorno en el Web Service:
+
+```env
+DATABASE_URL=<url-interna-de-tu-postgres-en-render>
+JWT_SECRET=<un-seguro-muy-largo>
+NASA_API_KEY=<tu-api-key-nasa>
+OPENAI_API_KEY=<tu-api-key-openai>    # Opcional
+```
+
+4. Build Command: `npm run build`
+5. Start Command: `npm start`
 
 Alternativas válidas: Vercel (mejor para Next.js) o Railway (similar a Render).
 

@@ -17,18 +17,22 @@ export async function DELETE(_: Request, { params }: Params) {
 
   const { collectionId } = params;
 
-  const collection = await prisma.collection.findFirst({
-    where: { id: collectionId, userId: user.id },
-    select: { id: true },
-  });
+  try {
+    const collection = await prisma.collection.findFirst({
+      where: { id: collectionId, userId: user.id },
+      select: { id: true },
+    });
 
-  if (!collection) {
-    return NextResponse.json({ message: 'Colección no encontrada' }, { status: 404 });
+    if (!collection) {
+      return NextResponse.json({ message: 'Colección no encontrada' }, { status: 404 });
+    }
+
+    await prisma.collection.delete({ where: { id: collectionId } });
+
+    revalidatePath('/dashboard');
+
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json({ message: 'Error al eliminar la colección' }, { status: 500 });
   }
-
-  await prisma.collection.delete({ where: { id: collectionId } });
-
-  revalidatePath('/dashboard');
-
-  return NextResponse.json({ ok: true });
 }

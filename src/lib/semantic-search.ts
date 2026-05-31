@@ -1,5 +1,3 @@
-import 'server-only';
-
 import type { NasaSearchOutput } from '@/lib/schemas/nasa';
 
 const ROVER_LIST = ['curiosity', 'opportunity', 'spirit', 'perseverance'] as const;

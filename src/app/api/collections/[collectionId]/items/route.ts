@@ -18,10 +18,16 @@ export async function POST(request: Request, { params }: Params) {
 
   const { collectionId } = params;
 
-  const collection = await prisma.collection.findFirst({
-    where: { id: collectionId, userId: user.id },
-    select: { id: true },
-  });
+  let collection: { id: string } | null;
+
+  try {
+    collection = await prisma.collection.findFirst({
+      where: { id: collectionId, userId: user.id },
+      select: { id: true },
+    });
+  } catch {
+    return NextResponse.json({ message: 'Error al verificar la colección' }, { status: 500 });
+  }
 
   if (!collection) {
     return NextResponse.json({ message: 'Colección no encontrada' }, { status: 404 });
@@ -41,40 +47,44 @@ export async function POST(request: Request, { params }: Params) {
     return NextResponse.json({ message: parsed.error.issues[0]?.message ?? 'Datos inválidos' }, { status: 400 });
   }
 
-  const nasaImage = await prisma.nasaImage.upsert({
-    where: { nasaId: parsed.data.nasaId },
-    update: {
-      title: parsed.data.title,
-      description: parsed.data.description || null,
-      imageUrl: parsed.data.imageUrl,
-      mediaType: parsed.data.mediaType,
-      nasaDate: parsed.data.nasaDate ? new Date(parsed.data.nasaDate) : new Date(),
-    },
-    create: {
-      nasaId: parsed.data.nasaId,
-      title: parsed.data.title,
-      description: parsed.data.description || null,
-      imageUrl: parsed.data.imageUrl,
-      mediaType: parsed.data.mediaType,
-      nasaDate: parsed.data.nasaDate ? new Date(parsed.data.nasaDate) : new Date(),
-    },
-  });
+  try {
+    const nasaImage = await prisma.nasaImage.upsert({
+      where: { nasaId: parsed.data.nasaId },
+      update: {
+        title: parsed.data.title,
+        description: parsed.data.description || null,
+        imageUrl: parsed.data.imageUrl,
+        mediaType: parsed.data.mediaType,
+        nasaDate: parsed.data.nasaDate ? new Date(parsed.data.nasaDate) : new Date(),
+      },
+      create: {
+        nasaId: parsed.data.nasaId,
+        title: parsed.data.title,
+        description: parsed.data.description || null,
+        imageUrl: parsed.data.imageUrl,
+        mediaType: parsed.data.mediaType,
+        nasaDate: parsed.data.nasaDate ? new Date(parsed.data.nasaDate) : new Date(),
+      },
+    });
 
-  await prisma.collectionItem.upsert({
-    where: {
-      collectionId_nasaImageId: {
+    await prisma.collectionItem.upsert({
+      where: {
+        collectionId_nasaImageId: {
+          collectionId,
+          nasaImageId: nasaImage.id,
+        },
+      },
+      update: {},
+      create: {
         collectionId,
         nasaImageId: nasaImage.id,
       },
-    },
-    update: {},
-    create: {
-      collectionId,
-      nasaImageId: nasaImage.id,
-    },
-  });
+    });
 
-  revalidatePath('/dashboard');
+    revalidatePath('/dashboard');
 
-  return NextResponse.json({ ok: true }, { status: 201 });
+    return NextResponse.json({ ok: true }, { status: 201 });
+  } catch {
+    return NextResponse.json({ message: 'Error al guardar la imagen en la colección' }, { status: 500 });
+  }
 }

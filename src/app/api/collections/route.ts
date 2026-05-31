@@ -12,23 +12,27 @@ export async function GET() {
     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
   }
 
-  const collections = await prisma.collection.findMany({
-    where: { userId: user.id },
-    orderBy: { createdAt: 'desc' },
-    include: {
-      _count: {
-        select: { collectionItems: true },
-      },
-      collectionItems: {
-        orderBy: { createdAt: 'desc' },
-        include: {
-          nasaImage: true,
+  try {
+    const collections = await prisma.collection.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        _count: {
+          select: { collectionItems: true },
+        },
+        collectionItems: {
+          orderBy: { createdAt: 'desc' },
+          include: {
+            nasaImage: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  return NextResponse.json({ collections });
+    return NextResponse.json({ collections });
+  } catch {
+    return NextResponse.json({ message: 'Error al cargar colecciones' }, { status: 500 });
+  }
 }
 
 export async function POST(request: Request) {
@@ -52,26 +56,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: parsed.error.issues[0]?.message ?? 'Datos inválidos' }, { status: 400 });
   }
 
-  const collection = await prisma.collection.create({
-    data: {
-      name: parsed.data.name,
-      description: parsed.data.description || undefined,
-      userId: user.id,
-    },
-    include: {
-      _count: {
-        select: { collectionItems: true },
+  try {
+    const collection = await prisma.collection.create({
+      data: {
+        name: parsed.data.name,
+        description: parsed.data.description || undefined,
+        userId: user.id,
       },
-      collectionItems: {
-        orderBy: { createdAt: 'desc' },
-        include: {
-          nasaImage: true,
+      include: {
+        _count: {
+          select: { collectionItems: true },
+        },
+        collectionItems: {
+          orderBy: { createdAt: 'desc' },
+          include: {
+            nasaImage: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  revalidatePath('/dashboard');
+    revalidatePath('/dashboard');
 
-  return NextResponse.json({ collection }, { status: 201 });
+    return NextResponse.json({ collection }, { status: 201 });
+  } catch {
+    return NextResponse.json({ message: 'Error al crear la colección' }, { status: 500 });
+  }
 }

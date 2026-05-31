@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: mindshore-challenge
+    runtime: node
+    repo: https://github.com/federicoilluminato/challengemindshore
+    branch: main
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mindshore-db
+          property: connectionString
+      - key: JWT_SECRET
+        sync: false
+      - key: NASA_API_KEY
+        sync: false
+
+databases:
+  - name: mindshore-db
+    databaseName: mindshore
+    user: mindshore
+    plan: free
