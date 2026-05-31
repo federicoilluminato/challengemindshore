@@ -100,7 +100,8 @@ export function interpretNaturalLanguage(query: string): SemanticSearchInterpret
     cleanQuery = cleanQuery.replace(new RegExp(cam.replace(/[- ]/g, '[- ]'), 'ig'), '');
   }
 
-  cleanQuery = cleanQuery.replace(/\b(?:mostrame|buscame|quiero ver|dame|enseñame|muestra|buscar|encuentra|fotos?\s*de|imágenes?\s*de|del?\s+)\b/gi, '');
+  cleanQuery = cleanQuery.replace(/\b(?:mostrame|buscame|quiero ver|dame|enseñame|muestra|buscar|encuentra|fotos?\s*de|imágenes?\s*de|del?\s+|show me|find|give me|i want|i need|pictures of|photos of|images of|of the|of a)\b/gi, '');
+  cleanQuery = cleanQuery.replace(/\b(?:show|me|find|give|want|need|the|a|an|of|for|with|and|in|on|at|to|by|from|all)\b/gi, '');
   cleanQuery = cleanQuery.replace(/[,\s]+/g, ' ').trim();
 
   if (!cleanQuery && rover) {
