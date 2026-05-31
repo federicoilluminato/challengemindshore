@@ -9,7 +9,7 @@ async function main() {
     create: {
       email: 'demo@mindshore.local',
       name: 'Demo User',
-      passwordHash: 'demo-password-hash',
+      passwordHash: '$2b$10$7MGampG3CHiNZa.N1OdIUuyJMgcSWj8ToeDuClusj56TP9/R4vSuO',
     },
   });
 
